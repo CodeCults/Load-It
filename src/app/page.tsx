@@ -137,17 +137,43 @@ function WorkoutTab() {
       </div>
 
       {/* Start Workout Button */}
-      <button className="w-full bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 font-black py-5 rounded-xl mb-6 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 hover:scale-[1.02] active:scale-[0.98]">
+      <a 
+        href="/workout/create"
+        className="w-full bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 text-white font-black py-5 rounded-xl mb-6 transition-all duration-300 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center"
+      >
         <div className="flex items-center justify-center gap-3">
           <span className="text-lg tracking-wide">ANTRENMAN BAŞLAT</span>
         </div>
-      </button>
+      </a>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        <a
+          href="/exercises"
+          className="bg-[#1C1F26] rounded-xl p-4 border border-white/5 hover:border-blue-500/30 transition-all text-center"
+        >
+          <div className="text-3xl mb-2">💪</div>
+          <div className="font-bold text-sm">Egzersizler</div>
+          <div className="text-xs text-gray-500">Kütüphane</div>
+        </a>
+        <button 
+          onClick={() => alert('Program oluşturma özelliği yakında gelecek!')}
+          className="bg-[#1C1F26] rounded-xl p-4 border border-white/5 hover:border-blue-500/30 transition-all text-center"
+        >
+          <div className="text-3xl mb-2">📋</div>
+          <div className="font-bold text-sm">Programlar</div>
+          <div className="text-xs text-gray-500">Planla</div>
+        </button>
+      </div>
 
       {/* Recent Workouts */}
       <div className="space-y-3">
         <h3 className="text-xl font-black mb-4 tracking-tight">Son Antrenmanlar</h3>
         
-        <div className="bg-[#1C1F26] rounded-xl p-5 border border-white/5 hover:border-blue-500/30 transition-all">
+        <button 
+          onClick={() => alert('Antrenman detayı yakında eklenecek!')}
+          className="w-full bg-[#1C1F26] rounded-xl p-5 border border-white/5 hover:border-blue-500/30 transition-all text-left"
+        >
           <div className="flex items-center justify-between mb-3">
             <h4 className="font-bold text-lg">Göğüs & Triceps</h4>
             <span className="text-xs text-gray-500 font-semibold">2 gün önce</span>
@@ -159,9 +185,12 @@ function WorkoutTab() {
             <span>•</span>
             <span className="text-blue-400 font-bold">+2.5kg PR 🔥</span>
           </div>
-        </div>
+        </button>
 
-        <div className="bg-[#1C1F26] rounded-xl p-5 border border-white/5 hover:border-blue-500/30 transition-all">
+        <button 
+          onClick={() => alert('Antrenman detayı yakında eklenecek!')}
+          className="w-full bg-[#1C1F26] rounded-xl p-5 border border-white/5 hover:border-blue-500/30 transition-all text-left"
+        >
           <div className="flex items-center justify-between mb-3">
             <h4 className="font-bold text-lg">Bacak Günü</h4>
             <span className="text-xs text-gray-500 font-semibold">4 gün önce</span>
@@ -173,7 +202,7 @@ function WorkoutTab() {
             <span>•</span>
             <span className="text-blue-400 font-bold">+5kg Squat PR 💪</span>
           </div>
-        </div>
+        </button>
       </div>
     </div>
   );
@@ -181,14 +210,38 @@ function WorkoutTab() {
 
 // Keşfet Tab Component
 function DiscoverTab() {
+  const [feedTab, setFeedTab] = useState<'for-you' | 'following'>('for-you');
+  const [postText, setPostText] = useState('');
+
+  const handlePost = () => {
+    if (postText.trim()) {
+      alert('Post özelliği yakında eklenecek!\n\nYazın: ' + postText);
+      setPostText('');
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       {/* Twitter-style Tabs */}
       <div className="flex border-b border-white/5 mb-1">
-        <button className="flex-1 py-4 font-bold text-white border-b-2 border-blue-500 transition-colors">
+        <button 
+          onClick={() => setFeedTab('for-you')}
+          className={`flex-1 py-4 font-bold transition-colors ${
+            feedTab === 'for-you'
+              ? 'text-white border-b-2 border-blue-500'
+              : 'text-gray-500 hover:text-gray-300'
+          }`}
+        >
           Sizin İçin
         </button>
-        <button className="flex-1 py-4 font-bold text-gray-500 hover:text-gray-300 transition-colors">
+        <button 
+          onClick={() => setFeedTab('following')}
+          className={`flex-1 py-4 font-bold transition-colors ${
+            feedTab === 'following'
+              ? 'text-white border-b-2 border-blue-500'
+              : 'text-gray-500 hover:text-gray-300'
+          }`}
+        >
           Takip Edilenler
         </button>
       </div>
@@ -201,19 +254,28 @@ function DiscoverTab() {
           </div>
           <div className="flex-1">
             <textarea
+              value={postText}
+              onChange={(e) => setPostText(e.target.value)}
               placeholder="Paylaşım Yap..."
               className="w-full bg-transparent text-white placeholder-gray-600 text-lg font-medium outline-none resize-none"
               rows={2}
             />
             <div className="flex items-center justify-between mt-3">
               <div className="flex gap-2">
-                <button className="text-blue-400 hover:bg-blue-500/10 p-2 rounded-full transition-colors">
+                <button 
+                  onClick={() => alert('Resim ekleme yakında gelecek!')}
+                  className="text-blue-400 hover:bg-blue-500/10 p-2 rounded-full transition-colors"
+                >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </button>
               </div>
-              <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold px-5 py-2 rounded-full transition-colors text-sm">
+              <button 
+                onClick={handlePost}
+                disabled={!postText.trim()}
+                className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/30 disabled:cursor-not-allowed text-white font-bold px-5 py-2 rounded-full transition-colors text-sm"
+              >
                 Share
               </button>
             </div>
@@ -239,7 +301,10 @@ function DiscoverTab() {
                 Yeni Bench Press PR! 🎉 <span className="text-blue-400 font-black">100kg</span> x 5 rep
               </p>
               <div className="flex items-center gap-2 text-gray-500">
-                <button className="flex items-center gap-2 hover:text-blue-400 group transition-colors">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); alert('Yorum özelliği yakında gelecek!'); }}
+                  className="flex items-center gap-2 hover:text-blue-400 group transition-colors"
+                >
                   <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -247,7 +312,10 @@ function DiscoverTab() {
                   </div>
                   <span className="text-sm font-semibold">11</span>
                 </button>
-                <button className="flex items-center gap-2 hover:text-red-400 group transition-colors">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); alert('Like özelliği yakında gelecek!'); }}
+                  className="flex items-center gap-2 hover:text-red-400 group transition-colors"
+                >
                   <div className="group-hover:bg-red-500/10 p-2 rounded-full transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -255,7 +323,10 @@ function DiscoverTab() {
                   </div>
                   <span className="text-sm font-semibold">24</span>
                 </button>
-                <button className="hover:text-blue-400 group transition-colors ml-auto">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); alert('Paylaş özelliği yakında gelecek!'); }}
+                  className="hover:text-blue-400 group transition-colors ml-auto"
+                >
                   <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -283,7 +354,10 @@ function DiscoverTab() {
                 <span className="text-violet-400 font-black">30 gün</span> streak tamamladım! 🔥 Hedef 100 gün
               </p>
               <div className="flex items-center gap-2 text-gray-500">
-                <button className="flex items-center gap-2 hover:text-blue-400 group transition-colors">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); alert('Yorum özelliği yakında gelecek!'); }}
+                  className="flex items-center gap-2 hover:text-blue-400 group transition-colors"
+                >
                   <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -291,7 +365,10 @@ function DiscoverTab() {
                   </div>
                   <span className="text-sm font-semibold">18</span>
                 </button>
-                <button className="flex items-center gap-2 hover:text-red-400 group transition-colors">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); alert('Like özelliği yakında gelecek!'); }}
+                  className="flex items-center gap-2 hover:text-red-400 group transition-colors"
+                >
                   <div className="group-hover:bg-red-500/10 p-2 rounded-full transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -299,7 +376,10 @@ function DiscoverTab() {
                   </div>
                   <span className="text-sm font-semibold">47</span>
                 </button>
-                <button className="hover:text-blue-400 group transition-colors ml-auto">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); alert('Paylaş özelliği yakında gelecek!'); }}
+                  className="hover:text-blue-400 group transition-colors ml-auto"
+                >
                   <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -326,7 +406,10 @@ function DiscoverTab() {
                 Deadlift <span className="text-blue-400 font-black">120kg</span> 💪 Kadınlar da kaldırır!
               </p>
               <div className="flex items-center gap-2 text-gray-500">
-                <button className="flex items-center gap-2 hover:text-blue-400 group transition-colors">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); alert('Yorum özelliği yakında gelecek!'); }}
+                  className="flex items-center gap-2 hover:text-blue-400 group transition-colors"
+                >
                   <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -334,7 +417,10 @@ function DiscoverTab() {
                   </div>
                   <span className="text-sm font-semibold">15</span>
                 </button>
-                <button className="flex items-center gap-2 hover:text-red-400 group transition-colors">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); alert('Like özelliği yakında gelecek!'); }}
+                  className="flex items-center gap-2 hover:text-red-400 group transition-colors"
+                >
                   <div className="group-hover:bg-red-500/10 p-2 rounded-full transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -342,7 +428,10 @@ function DiscoverTab() {
                   </div>
                   <span className="text-sm font-semibold">67</span>
                 </button>
-                <button className="hover:text-blue-400 group transition-colors ml-auto">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); alert('Paylaş özelliği yakında gelecek!'); }}
+                  className="hover:text-blue-400 group transition-colors ml-auto"
+                >
                   <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
