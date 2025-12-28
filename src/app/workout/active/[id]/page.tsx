@@ -8,9 +8,9 @@ import { useEffect, useState } from 'react';
 interface WorkoutExercise {
   exercise_id: string;
   exercise_name: string;
-  sets: number;
-  reps: number;
-  rest_seconds: number;
+  sets: number | string;
+  reps: number | string;
+  target_weight: number | string;
 }
 
 interface SetLog {
@@ -38,7 +38,6 @@ export default function ActiveWorkoutPage() {
   const [startTime] = useState(new Date());
   const [isResting, setIsResting] = useState(false);
   const [restTimeLeft, setRestTimeLeft] = useState(0);
-  const [bodyWeight, setBodyWeight] = useState<number>(0);
 
   useEffect(() => {
     const exercisesParam = searchParams.get('exercises');
@@ -47,10 +46,10 @@ export default function ActiveWorkoutPage() {
       
       const progress: ExerciseProgress[] = workoutExercises.map((exercise) => ({
         exercise,
-        sets: Array.from({ length: exercise.sets }, (_, i) => ({
+        sets: Array.from({ length: Number(exercise.sets) || 3 }, (_, i) => ({
           set_number: i + 1,
-          reps: exercise.reps,
-          weight: 0,
+          reps: Number(exercise.reps) || 10,
+          weight: Number(exercise.target_weight) || 0,
           completed: false,
         })),
         currentSet: 0,
@@ -58,26 +57,7 @@ export default function ActiveWorkoutPage() {
 
       setExercises(progress);
     }
-
-    // Fetch body weight from session
-    fetchBodyWeight();
   }, [searchParams]);
-
-  const fetchBodyWeight = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('workout_sessions')
-        .select('body_weight')
-        .eq('id', sessionId)
-        .single();
-
-      if (!error && data) {
-        setBodyWeight(data.body_weight || 0);
-      }
-    } catch (error) {
-      console.error('Error fetching body weight:', error);
-    }
-  };
 
   useEffect(() => {
     if (isResting && restTimeLeft > 0) {
@@ -217,9 +197,6 @@ export default function ActiveWorkoutPage() {
             <div className="text-center">
               <div className="text-sm text-gray-400">Egzersiz {currentExerciseIndex + 1}/{exercises.length}</div>
               <div className="font-bold">{completedSets}/{totalSets} Set</div>
-              {bodyWeight > 0 && (
-                <div className="text-xs text-blue-400 font-semibold mt-1">⚖️ {bodyWeight}kg</div>
-              )}
             </div>
             <button
               onClick={finishWorkout}

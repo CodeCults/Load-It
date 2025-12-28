@@ -62,7 +62,6 @@ CREATE TABLE workout_sessions (
   started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   completed_at TIMESTAMP WITH TIME ZONE,
   duration_minutes INTEGER,
-  body_weight DECIMAL(5, 2),
   notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

@@ -9,9 +9,9 @@ import { Exercise } from '@/types/database.types';
 interface WorkoutExercise {
   exercise_id: string;
   exercise_name: string;
-  sets: number;
-  reps: number;
-  rest_seconds: number;
+  sets: number | string;
+  reps: number | string;
+  target_weight: number | string;
 }
 
 export default function CreateWorkoutPage() {
@@ -22,7 +22,6 @@ export default function CreateWorkoutPage() {
   const [showExercisePicker, setShowExercisePicker] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [bodyWeight, setBodyWeight] = useState<number>(0);
 
   useEffect(() => {
     if (user) {
@@ -58,7 +57,7 @@ export default function CreateWorkoutPage() {
         exercise_name: exercise.name,
         sets: 3,
         reps: 10,
-        rest_seconds: 90,
+        target_weight: '',
       },
     ]);
     setShowExercisePicker(false);
@@ -81,11 +80,6 @@ export default function CreateWorkoutPage() {
       return;
     }
 
-    if (!bodyWeight || bodyWeight <= 0) {
-      alert('Lütfen vücut kilonu gir!');
-      return;
-    }
-
     try {
       // Create workout session
       const { data: session, error: sessionError } = await supabase
@@ -93,7 +87,6 @@ export default function CreateWorkoutPage() {
         .insert({
           user_id: user?.id,
           started_at: new Date().toISOString(),
-          body_weight: bodyWeight,
         })
         .select()
         .single();
@@ -142,29 +135,6 @@ export default function CreateWorkoutPage() {
       </header>
 
       <main className="pt-20 px-4 container mx-auto max-w-2xl">
-        {/* Body Weight Input */}
-        <div className="mb-6">
-          <div className="bg-gradient-to-r from-blue-500/10 to-violet-500/10 border border-blue-500/20 rounded-xl p-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-lg mb-1">Bugünkü Kilom</h3>
-                <p className="text-sm text-gray-400">Vücut ağırlığını takip et 📊</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  value={bodyWeight || ''}
-                  onChange={(e) => setBodyWeight(parseFloat(e.target.value) || 0)}
-                  placeholder="0"
-                  step="0.1"
-                  className="w-24 bg-[#0F1115] border border-white/10 rounded-lg px-4 py-3 text-center text-2xl font-black"
-                />
-                <span className="text-xl font-bold text-gray-400">kg</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Workout Exercises List */}
         <div className="mb-6">
           <h2 className="text-2xl font-black mb-4">Egzersizler</h2>
@@ -198,12 +168,26 @@ export default function CreateWorkoutPage() {
 
                   <div className="grid grid-cols-3 gap-3">
                     <div>
+                      <label className="text-xs text-gray-400 mb-1 block">Ağırlık</label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          value={exercise.target_weight}
+                          onChange={(e) => updateExercise(index, 'target_weight', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                          min="0"
+                          step="2.5"
+                          className="w-full bg-[#0F1115] border border-white/10 rounded-lg px-3 py-2 pr-8 text-center font-bold"
+                        />
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-500 pointer-events-none">kg</span>
+                      </div>
+                    </div>
+                    <div>
                       <label className="text-xs text-gray-400 mb-1 block">Set</label>
                       <input
                         type="number"
                         value={exercise.sets}
-                        onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 1)}
-                        min="1"
+                        onChange={(e) => updateExercise(index, 'sets', e.target.value === '' ? '' : parseInt(e.target.value))}
+                        min="0"
                         className="w-full bg-[#0F1115] border border-white/10 rounded-lg px-3 py-2 text-center font-bold"
                       />
                     </div>
@@ -212,19 +196,8 @@ export default function CreateWorkoutPage() {
                       <input
                         type="number"
                         value={exercise.reps}
-                        onChange={(e) => updateExercise(index, 'reps', parseInt(e.target.value) || 1)}
-                        min="1"
-                        className="w-full bg-[#0F1115] border border-white/10 rounded-lg px-3 py-2 text-center font-bold"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs text-gray-400 mb-1 block">Dinlenme (sn)</label>
-                      <input
-                        type="number"
-                        value={exercise.rest_seconds}
-                        onChange={(e) => updateExercise(index, 'rest_seconds', parseInt(e.target.value) || 0)}
+                        onChange={(e) => updateExercise(index, 'reps', e.target.value === '' ? '' : parseInt(e.target.value))}
                         min="0"
-                        step="30"
                         className="w-full bg-[#0F1115] border border-white/10 rounded-lg px-3 py-2 text-center font-bold"
                       />
                     </div>
@@ -249,13 +222,9 @@ export default function CreateWorkoutPage() {
         {workoutExercises.length > 0 && (
           <button
             onClick={startWorkout}
-            disabled={!bodyWeight || bodyWeight <= 0}
-            className="w-full bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-black py-5 rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 disabled:shadow-none"
+            className="w-full bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 text-white font-black py-5 rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50"
           >
-            {bodyWeight && bodyWeight > 0 
-              ? `ANTRENMANA BAŞLA (${workoutExercises.length} Egzersiz)` 
-              : 'ÖNCE KİLONU GİR ⚠️'
-            }
+            ANTRENMANA BAŞLA ({workoutExercises.length} Egzersiz)
           </button>
         )}
       </main>
