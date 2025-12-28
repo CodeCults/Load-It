@@ -81,11 +81,14 @@ export default function CreateWorkoutPage() {
     }
 
     try {
-      // Create workout session
+      // Create workout session with a default name
+      const sessionName = `Antrenman - ${new Date().toLocaleDateString('tr-TR')}`;
+      
       const { data: session, error: sessionError } = await supabase
         .from('workout_sessions')
         .insert({
           user_id: user?.id,
+          name: sessionName,
           started_at: new Date().toISOString(),
         })
         .select()
