@@ -11,8 +11,6 @@ interface WorkoutExercise {
   sets: number;
   reps: number;
   rest_seconds: number;
-  last_weight?: number;
-  suggested_weight?: number;
 }
 
 interface SetLog {
@@ -40,6 +38,7 @@ export default function ActiveWorkoutPage() {
   const [startTime] = useState(new Date());
   const [isResting, setIsResting] = useState(false);
   const [restTimeLeft, setRestTimeLeft] = useState(0);
+  const [bodyWeight, setBodyWeight] = useState<number>(0);
 
   useEffect(() => {
     const exercisesParam = searchParams.get('exercises');
@@ -51,7 +50,7 @@ export default function ActiveWorkoutPage() {
         sets: Array.from({ length: exercise.sets }, (_, i) => ({
           set_number: i + 1,
           reps: exercise.reps,
-          weight: exercise.suggested_weight || exercise.last_weight || 0,
+          weight: 0,
           completed: false,
         })),
         currentSet: 0,
@@ -59,7 +58,26 @@ export default function ActiveWorkoutPage() {
 
       setExercises(progress);
     }
+
+    // Fetch body weight from session
+    fetchBodyWeight();
   }, [searchParams]);
+
+  const fetchBodyWeight = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('workout_sessions')
+        .select('body_weight')
+        .eq('id', sessionId)
+        .single();
+
+      if (!error && data) {
+        setBodyWeight(data.body_weight || 0);
+      }
+    } catch (error) {
+      console.error('Error fetching body weight:', error);
+    }
+  };
 
   useEffect(() => {
     if (isResting && restTimeLeft > 0) {
@@ -141,33 +159,15 @@ export default function ActiveWorkoutPage() {
 
       // Save all completed sets
       for (const exerciseProgress of exercises) {
-        const completedSetsForExercise = exerciseProgress.sets.filter(s => s.completed);
-        
-        if (completedSetsForExercise.length > 0) {
-          // Create exercise_log entry
-          const { data: exerciseLog, error: exerciseLogError } = await supabase
-            .from('exercise_logs')
-            .insert({
-              session_id: sessionId,
-              exercise_id: exerciseProgress.exercise.exercise_id,
-              order_index: exercises.indexOf(exerciseProgress),
-            })
-            .select()
-            .single();
-
-          if (exerciseLogError) {
-            console.error('Error creating exercise log:', exerciseLogError);
-            continue;
-          }
-
-          // Insert all completed sets for this exercise
-          for (const set of completedSetsForExercise) {
+        for (const set of exerciseProgress.sets) {
+          if (set.completed) {
             await supabase.from('set_logs').insert({
-              exercise_log_id: exerciseLog.id,
+              workout_session_id: sessionId,
+              exercise_id: exerciseProgress.exercise.exercise_id,
               set_number: set.set_number,
-              weight_kg: set.weight,
               reps: set.reps,
-              is_completed: true,
+              weight: set.weight,
+              rest_seconds: exerciseProgress.exercise.rest_seconds,
             });
           }
         }
@@ -217,6 +217,9 @@ export default function ActiveWorkoutPage() {
             <div className="text-center">
               <div className="text-sm text-gray-400">Egzersiz {currentExerciseIndex + 1}/{exercises.length}</div>
               <div className="font-bold">{completedSets}/{totalSets} Set</div>
+              {bodyWeight > 0 && (
+                <div className="text-xs text-blue-400 font-semibold mt-1">⚖️ {bodyWeight}kg</div>
+              )}
             </div>
             <button
               onClick={finishWorkout}
@@ -254,32 +257,6 @@ export default function ActiveWorkoutPage() {
         {/* Exercise Info */}
         <div className="bg-[#1C1F26] rounded-xl p-6 border border-white/5 mb-6">
           <h2 className="text-3xl font-black mb-4">{currentExercise.exercise.exercise_name}</h2>
-          
-          {/* Progressive Overload Info */}
-          {currentExercise.exercise.last_weight && currentExercise.exercise.last_weight > 0 && (
-            <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 border border-blue-500/20 rounded-lg p-4 mb-4">
-              <div className="text-sm text-gray-400 mb-2">📊 Progressive Overload</div>
-              <div className="flex items-center gap-3">
-                <div>
-                  <div className="text-xs text-gray-500">Geçen Antrenman</div>
-                  <div className="text-2xl font-black text-blue-400">{currentExercise.exercise.last_weight}kg</div>
-                </div>
-                <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-                {currentExercise.exercise.suggested_weight && (
-                  <div>
-                    <div className="text-xs text-gray-500">Önerilen</div>
-                    <div className="text-2xl font-black text-green-400">{currentExercise.exercise.suggested_weight}kg</div>
-                  </div>
-                )}
-              </div>
-              <div className="text-xs text-gray-500 mt-2">
-                💪 +{((currentExercise.exercise.suggested_weight || 0) - (currentExercise.exercise.last_weight || 0)).toFixed(1)}kg artış öneriliyor
-              </div>
-            </div>
-          )}
-
           <div className="flex gap-4 text-sm">
             <div className="bg-blue-500/10 text-blue-400 px-4 py-2 rounded-lg font-bold">
               {currentExercise.exercise.sets} Set
@@ -321,23 +298,14 @@ export default function ActiveWorkoutPage() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-400 mb-1 block">
-                      Ağırlık (kg)
-                      {currentExercise.exercise.suggested_weight && currentExercise.exercise.suggested_weight > 0 && (
-                        <span className="ml-2 text-green-400">→ {currentExercise.exercise.suggested_weight}</span>
-                      )}
-                    </label>
+                    <label className="text-xs text-gray-400 mb-1 block">Ağırlık (kg)</label>
                     <input
                       type="number"
                       value={set.weight}
                       onChange={(e) => updateSet(index, 'weight', parseFloat(e.target.value) || 0)}
                       disabled={set.completed}
                       step="2.5"
-                      className={`w-full bg-[#0F1115] border rounded-lg px-3 py-2 text-center font-bold disabled:opacity-50 ${
-                        set.weight >= (currentExercise.exercise.suggested_weight || 0) && currentExercise.exercise.suggested_weight
-                          ? 'border-green-500/50 text-green-400'
-                          : 'border-white/10'
-                      }`}
+                      className="w-full bg-[#0F1115] border border-white/10 rounded-lg px-3 py-2 text-center font-bold disabled:opacity-50"
                     />
                   </div>
                 </div>

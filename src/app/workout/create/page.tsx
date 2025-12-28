@@ -12,8 +12,6 @@ interface WorkoutExercise {
   sets: number;
   reps: number;
   rest_seconds: number;
-  last_weight?: number;
-  suggested_weight?: number;
 }
 
 export default function CreateWorkoutPage() {
@@ -24,6 +22,7 @@ export default function CreateWorkoutPage() {
   const [showExercisePicker, setShowExercisePicker] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [bodyWeight, setBodyWeight] = useState<number>(0);
 
   useEffect(() => {
     if (user) {
@@ -51,67 +50,19 @@ export default function CreateWorkoutPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const addExercise = async (exercise: Exercise) => {
-    // Fetch last workout data for this exercise
-    try {
-      const { data: lastSet, error } = await supabase
-        .from('set_logs')
-        .select(`
-          weight_kg,
-          reps,
-          exercise_logs!inner(
-            exercise_id,
-            session_id,
-            workout_sessions!inner(
-              user_id
-            )
-          )
-        `)
-        .eq('exercise_logs.exercise_id', exercise.id)
-        .eq('exercise_logs.workout_sessions.user_id', user?.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      let lastWeight = 0;
-      let suggestedWeight = 0;
-
-      if (!error && lastSet) {
-        lastWeight = lastSet.weight_kg;
-        // Progressive overload: +2.5kg suggestion
-        suggestedWeight = lastWeight + 2.5;
-      }
-
-      setWorkoutExercises([
-        ...workoutExercises,
-        {
-          exercise_id: exercise.id,
-          exercise_name: exercise.name,
-          sets: 3,
-          reps: lastSet?.reps || 10,
-          rest_seconds: 90,
-          last_weight: lastWeight,
-          suggested_weight: suggestedWeight,
-        },
-      ]);
-      setShowExercisePicker(false);
-      setSearchQuery('');
-    } catch (err) {
-      console.error('Error fetching last workout:', err);
-      // Fallback if error
-      setWorkoutExercises([
-        ...workoutExercises,
-        {
-          exercise_id: exercise.id,
-          exercise_name: exercise.name,
-          sets: 3,
-          reps: 10,
-          rest_seconds: 90,
-        },
-      ]);
-      setShowExercisePicker(false);
-      setSearchQuery('');
-    }
+  const addExercise = (exercise: Exercise) => {
+    setWorkoutExercises([
+      ...workoutExercises,
+      {
+        exercise_id: exercise.id,
+        exercise_name: exercise.name,
+        sets: 3,
+        reps: 10,
+        rest_seconds: 90,
+      },
+    ]);
+    setShowExercisePicker(false);
+    setSearchQuery('');
   };
 
   const removeExercise = (index: number) => {
@@ -130,6 +81,11 @@ export default function CreateWorkoutPage() {
       return;
     }
 
+    if (!bodyWeight || bodyWeight <= 0) {
+      alert('Lütfen vücut kilonu gir!');
+      return;
+    }
+
     try {
       // Create workout session
       const { data: session, error: sessionError } = await supabase
@@ -137,6 +93,7 @@ export default function CreateWorkoutPage() {
         .insert({
           user_id: user?.id,
           started_at: new Date().toISOString(),
+          body_weight: bodyWeight,
         })
         .select()
         .single();
@@ -185,6 +142,29 @@ export default function CreateWorkoutPage() {
       </header>
 
       <main className="pt-20 px-4 container mx-auto max-w-2xl">
+        {/* Body Weight Input */}
+        <div className="mb-6">
+          <div className="bg-gradient-to-r from-blue-500/10 to-violet-500/10 border border-blue-500/20 rounded-xl p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-lg mb-1">Bugünkü Kilom</h3>
+                <p className="text-sm text-gray-400">Vücut ağırlığını takip et 📊</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  value={bodyWeight || ''}
+                  onChange={(e) => setBodyWeight(parseFloat(e.target.value) || 0)}
+                  placeholder="0"
+                  step="0.1"
+                  className="w-24 bg-[#0F1115] border border-white/10 rounded-lg px-4 py-3 text-center text-2xl font-black"
+                />
+                <span className="text-xl font-bold text-gray-400">kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Workout Exercises List */}
         <div className="mb-6">
           <h2 className="text-2xl font-black mb-4">Egzersizler</h2>
@@ -205,24 +185,7 @@ export default function CreateWorkoutPage() {
               {workoutExercises.map((exercise, index) => (
                 <div key={index} className="bg-[#1C1F26] rounded-xl p-4 border border-white/5">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg">{exercise.exercise_name}</h3>
-                      {exercise.last_weight && exercise.last_weight > 0 && (
-                        <div className="flex items-center gap-2 mt-1 text-sm">
-                          <span className="text-gray-400">
-                            Geçen: <span className="font-bold text-blue-400">{exercise.last_weight}kg</span>
-                          </span>
-                          {exercise.suggested_weight && (
-                            <>
-                              <span className="text-gray-600">→</span>
-                              <span className="text-gray-400">
-                                Öner: <span className="font-bold text-green-400">{exercise.suggested_weight}kg</span>
-                              </span>
-                            </>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                    <h3 className="font-bold text-lg">{exercise.exercise_name}</h3>
                     <button
                       onClick={() => removeExercise(index)}
                       className="text-red-400 hover:text-red-300 transition-colors"
@@ -286,9 +249,13 @@ export default function CreateWorkoutPage() {
         {workoutExercises.length > 0 && (
           <button
             onClick={startWorkout}
-            className="w-full bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 text-white font-black py-5 rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50"
+            disabled={!bodyWeight || bodyWeight <= 0}
+            className="w-full bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-black py-5 rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 disabled:shadow-none"
           >
-            ANTRENMANA BAŞLA ({workoutExercises.length} Egzersiz)
+            {bodyWeight && bodyWeight > 0 
+              ? `ANTRENMANA BAŞLA (${workoutExercises.length} Egzersiz)` 
+              : 'ÖNCE KİLONU GİR ⚠️'
+            }
           </button>
         )}
       </main>
