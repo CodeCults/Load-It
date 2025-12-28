@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Antrenmanlarını takip et, PR'larını paylaş, progressive overload ile gelişimini sürdür",
 };
 
+import { AuthProvider } from '@/contexts/AuthContext';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -14,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className="antialiased">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

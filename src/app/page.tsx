@@ -1,11 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 type Tab = 'workout' | 'discover' | 'trophies';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('workout');
+  const { user, loading, signOut } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0F1115] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-[#0F1115] text-white">
@@ -16,8 +41,12 @@ export default function Home() {
             <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-violet-500 bg-clip-text text-transparent">
               Load It
             </h1>
-            <button className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-base font-bold text-white shadow-lg shadow-blue-500/50">
-              E
+            <button 
+              onClick={() => signOut()}
+              className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-base font-bold text-white shadow-lg shadow-blue-500/50 hover:from-blue-600 hover:to-violet-700 transition-all"
+              title="Çıkış Yap"
+            >
+              {user?.user_metadata?.username?.charAt(0)?.toUpperCase() || 'U'}
             </button>
           </div>
         </div>
