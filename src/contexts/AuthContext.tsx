@@ -88,7 +88,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (profileError) throw profileError;
       }
 
-      router.push('/');
+      // Redirect to onboarding
+      router.push('/onboarding');
     } catch (error: any) {
       throw new Error(error.message);
     }

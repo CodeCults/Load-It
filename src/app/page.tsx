@@ -8,7 +8,7 @@ type Tab = 'workout' | 'discover' | 'trophies';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('workout');
-  const { user, loading, signOut } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -41,13 +41,13 @@ export default function Home() {
             <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-violet-500 bg-clip-text text-transparent">
               Load It
             </h1>
-            <button 
-              onClick={() => signOut()}
+            <a 
+              href="/settings"
               className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-base font-bold text-white shadow-lg shadow-blue-500/50 hover:from-blue-600 hover:to-violet-700 transition-all"
-              title="Çıkış Yap"
+              title="Ayarlar"
             >
               {user?.user_metadata?.username?.charAt(0)?.toUpperCase() || 'U'}
-            </button>
+            </a>
           </div>
         </div>
       </header>
