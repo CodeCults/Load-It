@@ -154,81 +154,174 @@ function WorkoutTab() {
 function DiscoverTab() {
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="mb-8">
-        <h2 className="text-3xl font-black mb-2 tracking-tight">Keşfet</h2>
-        <p className="text-gray-500 text-sm font-semibold">Topluluğun başarılarını gör</p>
+      {/* Twitter-style Tabs */}
+      <div className="flex border-b border-white/5 mb-1">
+        <button className="flex-1 py-4 font-bold text-white border-b-2 border-blue-500 transition-colors">
+          Sizin İçin
+        </button>
+        <button className="flex-1 py-4 font-bold text-gray-500 hover:text-gray-300 transition-colors">
+          Takip Edilenler
+        </button>
       </div>
 
-      <div className="space-y-4">
-        {/* Post 1 */}
-        <div className="bg-[#1C1F26] rounded-xl p-5 border border-white/5 hover:border-blue-500/30 transition-all">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/30">
-              A
-            </div>
-            <div>
-              <h4 className="font-bold text-base">Ahmet Yılmaz</h4>
-              <p className="text-xs text-gray-500 font-semibold">2 saat önce</p>
+      {/* Post Creation Area */}
+      <div className="border-b border-white/5 p-4">
+        <div className="flex gap-3">
+          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/30 flex-shrink-0">
+            E
+          </div>
+          <div className="flex-1">
+            <textarea
+              placeholder="Paylaşım Yap..."
+              className="w-full bg-transparent text-white placeholder-gray-600 text-lg font-medium outline-none resize-none"
+              rows={2}
+            />
+            <div className="flex items-center justify-between mt-3">
+              <div className="flex gap-2">
+                <button className="text-blue-400 hover:bg-blue-500/10 p-2 rounded-full transition-colors">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </button>
+              </div>
+              <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold px-5 py-2 rounded-full transition-colors text-sm">
+                Share
+              </button>
             </div>
           </div>
-          <p className="mb-4 text-base font-medium leading-relaxed">Yeni Bench Press PR! 🎉 <span className="text-blue-400 font-black text-lg">100kg</span> x 5 rep</p>
-          <div className="flex items-center gap-5 text-sm font-bold text-gray-400">
-            <button className="flex items-center gap-2 hover:text-blue-400 transition-colors">
-              <span>❤️</span>
-              <span>24</span>
-            </button>
-            <button className="flex items-center gap-2 hover:text-blue-400 transition-colors">
-              <span>💬</span>
-              <span>8</span>
-            </button>
+        </div>
+      </div>
+
+      {/* Feed */}
+      <div>
+        {/* Post 1 */}
+        <div className="border-b border-white/5 p-4 hover:bg-white/[0.02] transition-colors cursor-pointer">
+          <div className="flex gap-3">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/30 flex-shrink-0">
+              A
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-bold text-white">Ahmet Yılmaz</span>
+                <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded font-bold">PRO</span>
+                <span className="text-gray-500 text-sm">· 2 saat önce</span>
+              </div>
+              <p className="text-white mb-3 leading-relaxed">
+                Yeni Bench Press PR! 🎉 <span className="text-blue-400 font-black">100kg</span> x 5 rep
+              </p>
+              <div className="flex items-center gap-2 text-gray-500">
+                <button className="flex items-center gap-2 hover:text-blue-400 group transition-colors">
+                  <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold">11</span>
+                </button>
+                <button className="flex items-center gap-2 hover:text-red-400 group transition-colors">
+                  <div className="group-hover:bg-red-500/10 p-2 rounded-full transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold">24</span>
+                </button>
+                <button className="hover:text-blue-400 group transition-colors ml-auto">
+                  <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                  </div>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Post 2 */}
-        <div className="bg-[#1C1F26] rounded-xl p-5 border border-white/5 hover:border-blue-500/30 transition-all">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center font-black text-white shadow-lg shadow-violet-500/30">
+        <div className="border-b border-white/5 p-4 hover:bg-white/[0.02] transition-colors cursor-pointer">
+          <div className="flex gap-3">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center font-black text-white shadow-lg shadow-violet-500/30 flex-shrink-0">
               M
             </div>
-            <div>
-              <h4 className="font-bold text-base">Mehmet Demir</h4>
-              <p className="text-xs text-gray-500 font-semibold">5 saat önce</p>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-bold text-white">Mehmet Demir</span>
+                <span className="text-xs bg-violet-500/20 text-violet-400 px-2 py-0.5 rounded font-bold">PRO</span>
+                <span className="text-gray-500 text-sm">· 5 saat önce</span>
+              </div>
+              <p className="text-white mb-3 leading-relaxed">
+                <span className="text-violet-400 font-black">30 gün</span> streak tamamladım! 🔥 Hedef 100 gün
+              </p>
+              <div className="flex items-center gap-2 text-gray-500">
+                <button className="flex items-center gap-2 hover:text-blue-400 group transition-colors">
+                  <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold">18</span>
+                </button>
+                <button className="flex items-center gap-2 hover:text-red-400 group transition-colors">
+                  <div className="group-hover:bg-red-500/10 p-2 rounded-full transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold">47</span>
+                </button>
+                <button className="hover:text-blue-400 group transition-colors ml-auto">
+                  <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                  </div>
+                </button>
+              </div>
             </div>
-          </div>
-          <p className="mb-4 text-base font-medium leading-relaxed"><span className="text-violet-400 font-black text-lg">30 gün</span> streak tamamladım! 🔥 Hedef 100 gün</p>
-          <div className="flex items-center gap-5 text-sm font-bold text-gray-400">
-            <button className="flex items-center gap-2 hover:text-violet-400 transition-colors">
-              <span>❤️</span>
-              <span>42</span>
-            </button>
-            <button className="flex items-center gap-2 hover:text-violet-400 transition-colors">
-              <span>💬</span>
-              <span>12</span>
-            </button>
           </div>
         </div>
 
         {/* Post 3 */}
-        <div className="bg-[#1C1F26] rounded-xl p-5 border border-white/5 hover:border-blue-500/30 transition-all">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/30">
+        <div className="border-b border-white/5 p-4 hover:bg-white/[0.02] transition-colors cursor-pointer">
+          <div className="flex gap-3">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/30 flex-shrink-0">
               Z
             </div>
-            <div>
-              <h4 className="font-bold text-base">Zeynep Kara</h4>
-              <p className="text-xs text-gray-500 font-semibold">1 gün önce</p>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-bold text-white">Zeynep Kara</span>
+                <span className="text-gray-500 text-sm">· 1 gün önce</span>
+              </div>
+              <p className="text-white mb-3 leading-relaxed">
+                Deadlift <span className="text-blue-400 font-black">120kg</span> 💪 Kadınlar da kaldırır!
+              </p>
+              <div className="flex items-center gap-2 text-gray-500">
+                <button className="flex items-center gap-2 hover:text-blue-400 group transition-colors">
+                  <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold">15</span>
+                </button>
+                <button className="flex items-center gap-2 hover:text-red-400 group transition-colors">
+                  <div className="group-hover:bg-red-500/10 p-2 rounded-full transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold">67</span>
+                </button>
+                <button className="hover:text-blue-400 group transition-colors ml-auto">
+                  <div className="group-hover:bg-blue-500/10 p-2 rounded-full transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                  </div>
+                </button>
+              </div>
             </div>
-          </div>
-          <p className="mb-4 text-base font-medium leading-relaxed">Deadlift <span className="text-blue-400 font-black text-lg">120kg</span> 💪 Kadınlar da kaldırır!</p>
-          <div className="flex items-center gap-5 text-sm font-bold text-gray-400">
-            <button className="flex items-center gap-2 hover:text-blue-400 transition-colors">
-              <span>❤️</span>
-              <span>67</span>
-            </button>
-            <button className="flex items-center gap-2 hover:text-blue-400 transition-colors">
-              <span>💬</span>
-              <span>15</span>
-            </button>
           </div>
         </div>
       </div>
